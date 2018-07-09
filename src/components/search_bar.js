@@ -8,8 +8,12 @@ class SearchBar extends Component {
   }
 
   render() {
+    if (!this.props.showMe) {
+      return null;
+    }
     return (
       <div className='search-bar'>
+        Enter video id:
         <input
           value={this.state.term}
           onChange={event => this.onInputChange(event.target.value)}/>

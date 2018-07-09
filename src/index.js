@@ -4,8 +4,8 @@ import ReactDom from 'react-dom';
 import YTSearch from 'youtube-api-search';
 
 import SearchBar from './components/search_bar';
-import VideoList from './components/video_list';
 import VideoDetail from './components/video_detail';
+import Login from './components/login';
 
 const API_KEY = 'AIzaSyBjQqTJ4iEpslZhx-wsP6qaD2y_k43tVa8';
 
@@ -14,33 +14,32 @@ class App extends Component {
     super(props);
 
     this.state = {
-      videos: [],
-      selectedVideo: null
+      videoId: '5798801051001',
+      isLoggedIn: false
     };
 
-    this.videoSearch('casual nun');
+//    this.videoSearch('5798801051001');
 
   }
 
-  videoSearch(term) {
-    YTSearch({ key: API_KEY, term: term }, (videos) => {
-      this.setState({
-        videos,
-        selectedVideo: videos[0]
-      });
-    });
-  }
+  videoSearch = (term) => {
+    this.setState({ videoId: term });
+  };
+
+  loggedIn = (isLoggedIn) => {
+    this.setState({ isLoggedIn: isLoggedIn });
+  };
 
   render() {
-    const videoSearch = _.debounce((term) => {this.videoSearch(term)}, 300);
+    const videoSearch = _.debounce((term) => {
+      this.videoSearch(term);
+    }, 300);
 
     return (
       <div>
-        <SearchBar onSearchTermChange={videoSearch}/>
-        <VideoDetail video={this.state.selectedVideo}/>
-        <VideoList
-          onVideoSelect={selectedVideo => this.setState({selectedVideo})}
-          videos={this.state.videos}/>
+        <Login hideMe={this.state.isLoggedIn} onLoggedIn={this.loggedIn}/>
+        <SearchBar onSearchTermChange={videoSearch} showMe={this.state.isLoggedIn}/>
+        <VideoDetail videoId={this.state.videoId} showMe={this.state.isLoggedIn}/>
       </div>
     );
   }
